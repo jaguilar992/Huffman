@@ -8,15 +8,17 @@ import java.util.Arrays;
  */
 public class ARBOL {
     private static final int N = 10000;
-    public int raiz=-1;
-    public int [] hijo_mas_izq = new int[ARBOL.N];
-    public Object [] data = new Object[ARBOL.N];;
-    public int [] hermano_dere = new int[ARBOL.N];
+    private int raiz=-1;
+    private int [] hijo_mas_izq = new int[ARBOL.N];
+    private Object [] data = new Object[ARBOL.N];;
+    private int [] hermano_dere = new int[ARBOL.N];
     private boolean [] memoria = new boolean[N];
+    private int n=0; // Numero de nodos
+    private int peso=0;
     
   
     public ARBOL(){
-        Arrays.fill(this.hijo_mas_izq,-1);
+        Arrays.fill(this.hijo_mas_izq,-1);// SETEA todos los elementos en -1
         Arrays.fill(this.hermano_dere,-1);
     };
     
@@ -102,35 +104,79 @@ public class ARBOL {
         
     }
     
-    //7 CREAi (v,A_1,A_2,...,A_i) :: ARBOL
-    public  int CREA(Object nodo){ // CREA0
-        int m = memoria_i();
-        try {
-            this.data[m]=nodo;
-            return m;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            return -1;
-        }        
+// TRABAJANDO
+       //7 CREAi (v,A_1,A_2,...,A_i) :: ARBOL
+//    public  int CREA(Object nodo){ // CREA0
+//        int m = memoria_i();
+//        try {
+//            this.data[m]=nodo;
+//            return m;
+//        } catch (ArrayIndexOutOfBoundsException e) {
+//            return -1;
+//        }        
+//    }
+    
+    public static ARBOL CREA(Object nodo){
+        ARBOL creado = new ARBOL();
+        int m = creado.memoria_i();
+        creado.data[m]=nodo;
+        creado.raiz=m;
+        creado.setN(1);
+        return creado;
     }
     
-    public int CREA(Object nodo, int ...Ak){ //CREAk
-        int m = memoria_i();
-        try {
-            this.raiz=m;
-            this.data[m]=nodo;
-            this.hijo_mas_izq[m]=Ak[0];
-            this.hermano_dere[m]=-1;
-            for (int i = 0; i < Ak.length-1; i++) {
-                this.hijo_mas_izq[Ak[i]]=-1;
-                this.hermano_dere[Ak[i]]=Ak[i+1];
+//    public int CREA(Object nodo, int ...Ak){ //CREAk
+//        int m = memoria_i();
+//        try {
+//            this.raiz=m;
+//            this.data[m]=nodo;
+//            this.hijo_mas_izq[m]=Ak[0];
+//            this.hermano_dere[m]=-1;
+//            for (int i = 0; i < Ak.length-1; i++) {
+//                this.hijo_mas_izq[Ak[i]]=-1;
+//                this.hermano_dere[Ak[i]]=Ak[i+1];
+//            }
+//            this.hermano_dere[Ak[Ak.length-1]]=-1;
+//            this.hijo_mas_izq[Ak[Ak.length-1]]=-1;
+//            return m;
+//        } catch (ArrayIndexOutOfBoundsException e) {
+//            return -1;
+//        }    
+//    }
+    
+    public static ARBOL CREA(Object nodo, ARBOL ...Ak){
+        ARBOL creado = new ARBOL();
+        int peso = 0, n = 0;
+        for (int i=0; i<Ak.length; i++) {
+            for (int j = 0; j < Ak[i].getN(); j++) {
+                int k = creado.memoria_i(); // Reservar memoria secuencial
+                creado.data[k]=Ak[i].data[j];
+                if (Ak[i].hijo_mas_izq[j]!=-1) {
+                    creado.hijo_mas_izq[k]=Ak[i].hijo_mas_izq[j]+n;
+                }
+                if(Ak[i].hermano_dere[j]!=-1){
+                    //System.out.println(Ak[i].data[j]+"+"+Ak[i].hermano_dere[j]+"+"+Ak[i].data[Ak[i].hermano_dere[j]]+"+"+n);
+                    creado.hermano_dere[k]=Ak[i].hermano_dere[j]+n;
+                }
             }
-            this.hermano_dere[Ak[Ak.length-1]]=-1;
-            this.hijo_mas_izq[Ak[Ak.length-1]]=-1;
-            return m;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            return -1;
-        }  
+          if (i!=Ak.length-1) {
+              System.out.println(Ak[i].RAIZ()+"+"+Ak[i+1].RAIZ());
+           creado.hermano_dere[n+Ak[i].raiz]=n+Ak[i].getN()-1+Ak[i+1].getN();
+          }
+            n += Ak[i].getN();
+            peso += Ak[i].getPeso();
+        }
         
+        creado.setN(n+1);
+        creado.setPeso(peso);
+        
+        //RAIZ
+        int m = creado.memoria_i();
+        creado.data[m]=nodo;
+        creado.hijo_mas_izq[m]=Ak[0].raiz;
+        creado.raiz=m;
+        
+        return creado;
     }
     
     
@@ -190,5 +236,36 @@ public class ARBOL {
         }
         return hermano_der_de;
     }
+
+    public int getN() {
+        return n;
+    }
+
+    public void setN(int n) {
+        this.n = n;
+    }
     
+    @Override
+    public String toString(){
+        String p = "";
+        p+=("i\tHI\tData\tHD\n");
+        for (int i = 0; i < this.getN(); i++) {
+            p+=(i+"\t"+this.hijo_mas_izq[i]+"\t"+this.data[i]+"\t"+this.hermano_dere[i]+"\n");
+        }
+        return p;
+    }
+
+    /**
+     * @return the getPeso
+     */
+    public int getPeso() {
+        return peso;
+    }
+
+    /**
+     * @param peso the getPeso to set
+     */
+    public void setPeso(int peso) {
+        this.peso = peso;
+    }
 }
