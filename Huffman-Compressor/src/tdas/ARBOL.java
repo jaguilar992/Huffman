@@ -65,7 +65,25 @@ public class ARBOL {
     }
     
     // 2.B HIJO_MAS_DER
-    
+    public Object HIJO_MAS_DER(Object nodo){
+        for (int i = 0; i < 10; i++) {
+            if (this.data[i].equals(nodo)) {
+                Object j=this.HIJO_MAS_IZQ(nodo);
+                if (j!=null) {
+                    Object hijo = null;
+                    Object h_der = this.HERMANO_DER(j);
+                    while (h_der!=null) {                        
+                        hijo=h_der;
+                        h_der=this.HERMANO_DER(h_der);
+                    }
+                    return hijo;
+                }else{
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
     
     //3 HERMANO_DER
     public Object HERMANO_DER(Object nodo){
