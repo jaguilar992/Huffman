@@ -5,6 +5,7 @@ package huffman;
 
 import tdas.ARBOL;
 import java.util.ArrayList;
+import static tdas.ARBOL.CREA;
 
 
 
@@ -32,7 +33,7 @@ public class Huffman {
     private void crearARBOL() {
         
         if (arboles.size()==1){
-            System.out.println("ARBOL creado");
+         //   System.out.println("ARBOL creado");
         }else
         {
             //busqueda de los dos arboles mas pequeños
@@ -41,8 +42,10 @@ public class Huffman {
             //fin de la busqueda de los dos arboles mas pequeños
             
             //se añade un nuevo arbol a la lista
-            arboles.add(new ARBOL().CREA((MenosPesado.getPeso()+ MasPesado.getPeso()),
+            arboles.add(CREA( (MenosPesado.getPeso()+ MasPesado.getPeso()+">>"+MenosPesado.RAIZ()+"|"+MasPesado.RAIZ()),
                         MenosPesado, MasPesado));
+            //Nota de Antonio: Tuve que lo anterior porque algunos Raiz quedaban identicos al sumar los pesos
+            // Esto perjudica a la operacion PADRE
             
             /**llamada recursiva del metodo crearARBOL
              * mientras exista mas de un elemento
@@ -63,7 +66,7 @@ public class Huffman {
         
         //Busqueda del arbol de menorPeso
         for (ARBOL arbol : arboles) {
-            if (arbol.getPeso()< menorPeso){
+            if (arbol.getPeso()<menorPeso){
                 menorPeso = arbol.getPeso();
                 menorARBOL = arbol;
             }
@@ -88,5 +91,24 @@ public class Huffman {
         return null;
     }
 
-  
+    //Metodo caminoHuffman
+    
+    public String caminoHuffman(Object nodo){
+        // Construccion recursiva del camino, empieza buscando el padre y se mueve hasta la raíz,
+        // Se detiene cuando se alcanza el padre de la raíz = null;
+    	ARBOL arbol=this.arbolHuffman();
+    	Object P=arboles.get(0).PADRE(nodo);  //P es el padre del nodo en cuestion
+    	//Compara el nodo en cuestion con el Hijo_izq de su Padre, si son iguales agrega cero al camino
+        if (P!=null && nodo.equals(arbol.HIJO_MAS_IZQ(P))) {
+                return caminoHuffman(P)+"0";
+        } //Compara el nodo en cuestion con el hijo Derecho de su padre
+        else if (P!=null && nodo.equals(arbol.HIJO_MAS_DER(P))) {
+            return caminoHuffman(P)+"1";
+        }else{
+            return "";
+        }
+    }
+    
+    
+    
 }

@@ -37,7 +37,8 @@ public class HuffmanTest {
         
         Huffman k = new Huffman(bosque);
         System.out.println(k.arbolHuffman());
-        System.out.println(k.arbolHuffman().HIJO_MAS_DER(13));
+        //System.out.println(k.arbolHuffman().HIJO_MAS_DER(null));
+        System.out.println(k.caminoHuffman("a"));
     }
    
 }

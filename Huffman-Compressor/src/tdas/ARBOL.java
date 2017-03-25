@@ -66,7 +66,7 @@ public class ARBOL {
     
     // 2.B HIJO_MAS_DER
     public Object HIJO_MAS_DER(Object nodo){
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < this.data.length; i++) {
             if (this.data[i].equals(nodo)) {
                 Object j=this.HIJO_MAS_IZQ(nodo);
                 if (j!=null) {
