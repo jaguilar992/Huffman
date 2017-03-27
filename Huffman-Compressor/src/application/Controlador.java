@@ -47,6 +47,7 @@ public class Controlador implements Initializable{
 	@FXML private MenuItem menuSalir;
 	@FXML private Button bttComprimir;
 	@FXML private Button bttSalir;
+        @FXML private Button bttLimpiar;
 	@FXML private ProgressBar progress;
 	
 	
@@ -131,8 +132,7 @@ public class Controlador implements Initializable{
              //System.out.println(codigo.toString());
 
             //mostrar frecuencia de apariciones de caracteres asi como su nueva representacion huffman
- 
-            String comp ="";
+            System.out.println(text.length()*16+" bits");
             for (Character c : codigoHuffman.keySet()) {
                 text=text.replace(c.toString(), codigoHuffman.get(c));
             }
@@ -145,6 +145,7 @@ public class Controlador implements Initializable{
             for (int i = 0; i < restante; i++) {
                 text+="0";
             }
+            System.out.println(text.length()+" bits");
             
             String cod ="";
             for (int i = 0; i < text.length(); i++) {
@@ -226,7 +227,7 @@ public class Controlador implements Initializable{
             buscador.setFileFilter(filtro);
             buscador.setApproveButtonText("Seleccionar");
             buscador.showOpenDialog(null);
-            txtAPanel.setText(null);
+            limpiar();
 
 
 
@@ -278,7 +279,7 @@ public class Controlador implements Initializable{
 		buscador.setFileFilter(filtro);
 		buscador.setApproveButtonText("Seleccionar");
                 buscador.showOpenDialog(null);
-                txtAPanel.setText(null);
+                limpiar();
         
  
 
@@ -309,6 +310,7 @@ public class Controlador implements Initializable{
 	public void mostrarCodigoHuffman(String mensajeCodificado){
 	    /*codificacion necesaria  para mostrar el nuevo codigo huffman en:
             *txtACodigoHuffman.setText("Meter aqui el codigo huffman");*/
+            txtACodigoHuffman.setText(null);
             String mostrarCodigo="-----------Apariciones de cada caracter-------"+"\n"
                                   +dictionarioFrecuency.toString()
                                   +"\n-----------------Codigo Huffman--------------\n"

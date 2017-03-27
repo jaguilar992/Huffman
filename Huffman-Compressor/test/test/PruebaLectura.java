@@ -37,7 +37,7 @@ public class PruebaLectura {
             bits+=bite;
         }
         
-        //System.out.println(bits);
+       // System.out.println(bits);
         
         /// ################ ESCRITURA
 //        ARBOL arbolg = CREA("1",CREA("2"),CREA("3"));

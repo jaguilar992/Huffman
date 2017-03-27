@@ -11,7 +11,7 @@
 <AnchorPane prefHeight="389.0" prefWidth="669.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controlador">
    <children>
       <TextArea fx:id="txtAPanel" layoutX="14.0" layoutY="96.0" prefHeight="214.0" prefWidth="308.0" AnchorPane.bottomAnchor="73.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="347.0" AnchorPane.topAnchor="96.0" />
-      <TextArea fx:id="txtACodigoHuffman" editable="false" layoutX="342.0" layoutY="96.0" prefHeight="214.0" prefWidth="305.0" />
+      <TextArea fx:id="txtACodigoHuffman" editable="false" layoutX="342.0" layoutY="96.0" prefHeight="220.0" prefWidth="305.0" />
       <MenuButton fx:id="menuPrincipal" mnemonicParsing="false" prefHeight="22.0" prefWidth="141.0" text="Menu">
         <items>
           <MenuItem fx:id="menuImportarTexto" mnemonicParsing="false" onAction="#importarTexto" text="Importar texto(.txt)" />
@@ -20,8 +20,8 @@
             <MenuItem fx:id="menuSalir" mnemonicParsing="false" onAction="#salir" text="Salir" />
         </items>
       </MenuButton>
-      <Button fx:id="bttComprimir" layoutX="243.0" layoutY="330.0" mnemonicParsing="false" onAction="#comprimirArchivo" text="Comprimir" />
-      <Button fx:id="bttSalir" layoutX="365.0" layoutY="330.0" mnemonicParsing="false" onAction="#salir" text="Salir" />
+      <Button fx:id="bttComprimir" layoutX="231.0" layoutY="330.0" mnemonicParsing="false" onAction="#comprimirArchivo" text="Comprimir" />
+      <Button fx:id="bttSalir" layoutX="393.0" layoutY="330.0" mnemonicParsing="false" onAction="#salir" text="Salir" />
       <Label layoutX="15.0" layoutY="80.0" text="Texto A Comprimir" />
       <Label layoutX="346.0" layoutY="80.0" text="Representacion Huffman(bits)" />
       <Label layoutX="242.0" layoutY="32.0" text="Huffman-Compresor">
@@ -31,7 +31,7 @@
       </Label>
       <Separator layoutX="22.0" layoutY="26.0" prefHeight="6.0" prefWidth="633.0" />
       <Separator layoutX="21.0" layoutY="59.0" prefHeight="6.0" prefWidth="633.0" />
-      <ProgressBar fx:id="progress" blendMode="SRC_ATOP" cacheHint="SPEED" layoutX="60.0" layoutY="367.0" prefHeight="17.0" prefWidth="177.0" progress="0.15">
+      <ProgressBar fx:id="progress" blendMode="SRC_ATOP" cacheHint="SPEED" layoutX="60.0" layoutY="367.0" prefHeight="17.0" prefWidth="177.0" progress="0.0">
          <effect>
             <Bloom threshold="1.0">
                <input>
@@ -42,6 +42,7 @@
       </ProgressBar>
       <Label layoutX="15.0" layoutY="369.0" text="Proceso:" />
       <Separator layoutX="-2.0" layoutY="359.0" prefHeight="6.0" prefWidth="669.0" />
+      <Button fx:id="bttLimpiar" layoutX="313.0" layoutY="330.0" mnemonicParsing="false" onAction="#limpiar" text="Limpiar" />
    </children>
    <cursor>
       <Cursor fx:constant="DEFAULT" />
