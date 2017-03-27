@@ -22,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -66,6 +68,8 @@ public class Controlador implements Initializable{
         private HashMap<Character,String> codigoHuffman;
         private HashMap<Character,Integer> dictionarioFrecuency;
         private String text;
+        ARBOL arbol;
+        String cadena;
        
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -75,6 +79,9 @@ public class Controlador implements Initializable{
 	
 	@FXML
 	public void comprimirArchivo(){
+            
+            //SETEAR EL PROGRESSBAR
+             progress.setProgress(0);
 		
             //LO COMENTE PARA QUE CUANDO SE REALIZEN LAS PRUEBAS NO ESTE PIDENDO DIRECCION PARA GUARDAR EL ARCHIVO.Huffman
 
@@ -95,6 +102,9 @@ public class Controlador implements Initializable{
 
              //diccionario de frecuencia de apariciones de caracteres
              dictionarioFrecuency =  Codex.count_chars(text);
+             
+             //ASIGNAR 10% al progreso 
+             progress.setProgress(10);
 
              //probar que el diccionario de apariciones de caracteres funcione
 
@@ -108,6 +118,9 @@ public class Controlador implements Initializable{
                 n.setPeso(dictionarioFrecuency.get(key));
                 bosque.add(n);
              }
+             
+             //ASIGNAR 40% al progreso 
+             progress.setProgress(40);
 
              //imprimir los arboles del bosque huffman para verificar que funcione
             /* for (int i = 0; i < bosque.size(); i++) {
@@ -118,6 +131,9 @@ public class Controlador implements Initializable{
 
              Huffman h = new Huffman(bosque);
              ARBOL r = h.arbolHuffman();
+             
+             //ASIGNAR 50% al progreso 
+             progress.setProgress(50);
 
              //System.out.println(r);
 
@@ -127,6 +143,8 @@ public class Controlador implements Initializable{
                  String path = h.caminoHuffman(key);
                  codigoHuffman.put(key, path);
              }
+              //ASIGNAR 65% al progreso 
+             progress.setProgress(65);
 
              //probar que la nueva codificacion huffman funcione correctamente
              //System.out.println(codigo.toString());
@@ -145,7 +163,11 @@ public class Controlador implements Initializable{
             for (int i = 0; i < restante; i++) {
                 text+="0";
             }
-            System.out.println(text.length()+" bits");
+            
+             //ASIGNAR 85% al progreso 
+             progress.setProgress(65);
+             
+            //System.out.println(text.length()+" bits");
             
             String cod ="";
             for (int i = 0; i < text.length(); i++) {
@@ -155,8 +177,12 @@ public class Controlador implements Initializable{
                 i += 7;
             }
             
+            
+             //ASIGNAR 95% al progreso 
+             progress.setProgress(95);
+            
             String mensajeCodificado=cod;
-            mostrarCodigoHuffman(mensajeCodificado);
+            mostrarCodigoHuffman(text,cod);
 
 
 
@@ -215,13 +241,15 @@ public class Controlador implements Initializable{
                   } catch (IOException e) {
                       
                    }
+             //ASIGNAR 100% al progreso 
+             progress.setProgress(100);
 		
 	}
 	
 	@FXML
 	public void importarTexto(){
 		
-		
+            progress.setProgress(0);
             JFileChooser buscador= new JFileChooser(System.getProperty("C:/Documentos"));
             FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.TXT", "txt");
             buscador.setFileFilter(filtro);
@@ -236,11 +264,13 @@ public class Controlador implements Initializable{
                flujoLectura= new FileReader(buscador.getSelectedFile());
                bRLectura= new BufferedReader(flujoLectura);
                linea= bRLectura.readLine();
+               progress.setProgress(50);
 
                 while(linea!=null){
                     txtAPanel.appendText(linea+"\n");
                     linea= bRLectura.readLine();
                 }
+                progress.setProgress(100);
                 flujoLectura.close();
             }catch(Exception ex){
 
@@ -274,17 +304,62 @@ public class Controlador implements Initializable{
 	
 	@FXML
 	public void DescomprimirArchivoHuffman(){
+                progress.setProgress(0);
 		JFileChooser buscador= new JFileChooser(System.getProperty("C:/Documentos"));
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.Huffman","Huffman");
 		buscador.setFileFilter(filtro);
 		buscador.setApproveButtonText("Seleccionar");
                 buscador.showOpenDialog(null);
                 limpiar();
+                
+                /// LECTURA DEL ARCHIVO.HUFFMAN
+               
+              
+            try {
+               
+                FileInputStream arh= new FileInputStream(buscador.getSelectedFile());
+                ObjectInputStream reader = new ObjectInputStream(arh);
+                progress.setProgress(20);
+                arbol = (ARBOL) reader.readObject();
+                cadena = (String) reader.readObject();
+                progress.setProgress(40);
+                //System.out.println(arbol);
+               // System.out.println(cadena);
+                
+            } catch (IOException | ClassNotFoundException ex) {
+                Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+            }
+             
+                progress.setProgress(50);
+
+
+                // RECOSTRUCCION DE CADENA 100011000100 (LECTURA)
+                String bits ="";
+                for (int i = 0; i < cadena.length(); i++) {
+                    char p =cadena.charAt(i);
+                    String bite = Integer.toBinaryString(Integer.valueOf(p));
+                    int n = bite.length();
+                    for (int j = 0; j < 8-n; j++) {
+                        bite= "0"+(bite);
+                    }
+                    bits+=bite;
+                }
+                 progress.setProgress(70);
+
+                String texto = Huffman.descomprimir(arbol,bits);
+                //System.out.println(texto);
+                txtAPanel.setText("------Archivo descompreso exitosamente--------\n"
+                                  +texto
+                );
+          
+                  
+                progress.setProgress(100);
+
         
  
 
         
-                try{
+               /* try{
                    /*flujoLectura= new FileReader(buscador.getSelectedFile());
                    bRLectura= new BufferedReader(flujoLectura);
                    linea= bRLectura.readLine();
@@ -294,29 +369,32 @@ public class Controlador implements Initializable{
                         linea= bRLectura.readLine();
                     }
                     flujoLectura.close();*/
-                    FileInputStream arh= new FileInputStream(buscador.getSelectedFile());
+                  /*  FileInputStream arh= new FileInputStream(buscador.getSelectedFile());
             ObjectInputStream reader = new ObjectInputStream(arh);
             
             //NewArchivo Archivo = (NewArchivo)reader.readObject();
             arh.close();
                 } catch(Exception e) {
                                 e.printStackTrace();
-                        }
+                        }*/
 
 
 	}
 	
 	
-	public void mostrarCodigoHuffman(String mensajeCodificado){
+	public void mostrarCodigoHuffman(String codigoHuffmanBinario,String mensajeCodificado){
 	    /*codificacion necesaria  para mostrar el nuevo codigo huffman en:
             *txtACodigoHuffman.setText("Meter aqui el codigo huffman");*/
             txtACodigoHuffman.setText(null);
             String mostrarCodigo="-----------Apariciones de cada caracter-------"+"\n"
                                   +dictionarioFrecuency.toString()
-                                  +"\n-----------------Codigo Huffman--------------\n"
+                                  +"\n-----------------Nuevo Codigo Binario--------------\n"
                                   +codigoHuffman.toString()
-                                  +"\n---------Codificacion Binaria Huffman---------\n"
+                                  +"\n---------Codificacion Binaria Frase---------\n"
+                                  + codigoHuffmanBinario
+                                  +"\n---------Codificacion Frase---------\n"
                                   + mensajeCodificado
+                 
                  ;
 
             txtACodigoHuffman.setText(mostrarCodigo);
@@ -325,6 +403,7 @@ public class Controlador implements Initializable{
         
          @FXML
 	 public void limpiar(){
+                progress.setProgress(0);
 	 	txtACodigoHuffman.setText(null);
 	 	txtAPanel.setText(null);
 	 }
