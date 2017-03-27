@@ -52,36 +52,44 @@ public class ARBOL implements Serializable {
     
     //2 HIJO_MAS_IZQ
     public Object HIJO_MAS_IZQ(Object nodo){
-        for (int i = 0; i <data.length ; i++) {
-            if (nodo.equals(this.data[i])) {
-                int j = hijo_mas_izq[i];
-                if (j!=-1) {
-                    return this.data[j];
-                }else{
-                    return null;
+        try {
+            for (int i = 0; i < data.length; i++) {
+                if (this.data[i].equals(nodo)) {
+                    int j = hijo_mas_izq[i];
+                    if (j != -1) {
+                        return this.data[j];
+                    } else {
+                        return null;
+                    }
                 }
             }
+        } catch (NullPointerException e) {
+            return null;
         }
         return null;
     }
     
     // 2.B HIJO_MAS_DER
     public Object HIJO_MAS_DER(Object nodo){
-        for (int i = 0; i < this.data.length; i++) {
-            if (this.data[i].equals(nodo)) {
-                Object j=this.HIJO_MAS_IZQ(nodo);
-                if (j!=null) {
-                    Object hijo = null;
-                    Object h_der = this.HERMANO_DER(j);
-                    while (h_der!=null) {                        
-                        hijo=h_der;
-                        h_der=this.HERMANO_DER(h_der);
+        try {
+            for (int i = 0; i < this.data.length; i++) {
+                if (this.data[i].equals(nodo)) {
+                    Object j = this.HIJO_MAS_IZQ(nodo);
+                    if (j != null) {
+                        Object hijo = null;
+                        Object h_der = this.HERMANO_DER(j);
+                        while (h_der != null) {
+                            hijo = h_der;
+                            h_der = this.HERMANO_DER(h_der);
+                        }
+                        return hijo;
+                    } else {
+                        return null;
                     }
-                    return hijo;
-                }else{
-                    return null;
                 }
             }
+        } catch (NullPointerException e) {
+            return null;
         }
         return null;
     }

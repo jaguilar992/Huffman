@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import tdas.ARBOL;
+import huffman.Huffman;
 /**
  *
  * @author jaguilar992
@@ -18,7 +19,7 @@ public class PruebaLectura {
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {	
         
         /// ######################### LECTURA
-        FileInputStream arh= new FileInputStream("lorem.huffman");
+        FileInputStream arh= new FileInputStream("lorem2.huffman");
         ObjectInputStream reader = new ObjectInputStream(arh);
         ARBOL arbol = (ARBOL) reader.readObject();
         String cadena = (String) reader.readObject();
@@ -36,6 +37,9 @@ public class PruebaLectura {
             }
             bits+=bite;
         }
+        
+        String texto = Huffman.descomprimir(arbol,bits);
+        System.out.println(texto);
         
        // System.out.println(bits);
         

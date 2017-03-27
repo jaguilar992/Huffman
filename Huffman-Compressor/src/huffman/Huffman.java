@@ -109,6 +109,31 @@ public class Huffman {
         }
     }
     
-    
+    public static String descomprimir(ARBOL arbol, String textoComprimido){
+            String textoOriginal = "";
+            Object nodo = arbol.RAIZ();
+            char[] chars = textoComprimido.toCharArray();
+            
+           for (int i = 0; i < chars.length; i++) {
+                if (chars[i]=='0') {
+                    nodo = arbol.HIJO_MAS_IZQ(nodo);
+                    if (arbol.HIJO_MAS_IZQ(nodo)==null && arbol.HIJO_MAS_DER(nodo)==null) {
+                        textoOriginal+=arbol.ETIQUETA(nodo);
+                        nodo = arbol.RAIZ();
+                    }
+                } else {
+                    nodo = arbol.HIJO_MAS_DER(nodo);
+                    if ( arbol.HIJO_MAS_IZQ(nodo)==null && arbol.HIJO_MAS_DER(nodo)==null) {
+                        textoOriginal+=arbol.ETIQUETA(nodo);
+                        nodo = arbol.RAIZ();
+                    }
+                }
+                    
+                }
+                
+            
+           
+            return textoOriginal;
+        }
     
 }
