@@ -1,12 +1,13 @@
 package tdas;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  *
  * @author jaguilar992
  */
-public class ARBOL {
+public class ARBOL implements Serializable {
     private static final int N = 10000;
     private int raiz=-1;
     private int [] hijo_mas_izq = new int[ARBOL.N];

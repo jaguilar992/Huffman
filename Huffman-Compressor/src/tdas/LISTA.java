@@ -1,6 +1,9 @@
 // NO MODIFICAR - NO MODIFICAR - NO MODIFICAR - NO MODIFICAR - NO MODIFICAR
 package tdas;
-public class LISTA{
+
+import java.io.Serializable;
+
+public class LISTA implements Serializable{
 	private final int n = 10000;
 	private Object [] arrLista = new Object[n];
 	private int ultimo = -1; // Inicia vacío

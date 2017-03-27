@@ -1,21 +1,27 @@
 package application;
 
-import static tdas.ARBOL.CREA;
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import clases.CaracteresCadena;
+//import huffman.NewArchivo;
+import huffman.Codex;
 import huffman.Huffman;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -55,14 +61,11 @@ public class Controlador implements Initializable{
 	
 	
 	//variables para contar caracteres
-	private  ArrayList <CaracteresCadena> caracteres;
-	private  String caracterTemporal;
-	private  String tablaAscci[];
-	private  String[] arrayString;
-	private  ArrayList<ARBOL>bosque;
-	private  Huffman huffman; 
-        private ARBOL codex;
-
+	private ArrayList<ARBOL>bosque;
+        private HashMap<Character,String> codigoHuffman;
+        private HashMap<Character,Integer> dictionarioFrecuency;
+        private String text;
+       
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
@@ -72,81 +75,145 @@ public class Controlador implements Initializable{
 	@FXML
 	public void comprimirArchivo(){
 		
-		 JFileChooser buscador= new JFileChooser(System.getProperty("C:/User/Desktop"));
-		 //Establecer un filtor .Huffman
-		 FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.Huffman","Huffman");
- 		 buscador.setFileFilter(filtro);
-		 buscador.setApproveButtonText("Seleccionar");
-         buscador.showSaveDialog(null);
+            //LO COMENTE PARA QUE CUANDO SE REALIZEN LAS PRUEBAS NO ESTE PIDENDO DIRECCION PARA GUARDAR EL ARCHIVO.Huffman
 
-         //Llamar al metodo para contar el peso de cada caracter
-         pesoDeCaracteres(txtAPanel.getText());
-         
-         /*para acceder a los caracteres se hace lo siguiente:
- 		 * imaginar el siguiente arrayList:
- 		 * caracter  peso
- 		 *   a        2
- 		 *   b        3
- 		 *   c		  4
- 		 *   g		  6
- 		 * donde la letra es el caracter y el numero es el peso 
- 		 * para acceder a la letra se usara---->> caracteres(i).getCaracter(); dode i se genera del ciclo
- 		 * para acceder al numero se usara---->>> caracteres(i).getPeso(); donde i se genera del ciclo
- 		 */
- 		
-         //inicializar el arrayList de arboles
-         bosque=new ArrayList<>();
-         for (int i = 0; i <caracteres.size(); i++) {
-        	 String caracter=caracteres.get(i).getCaracter();
-        	 ARBOL arbol = CREA(caracter);
-        	 arbol.setPeso(caracteres.get(i).getPeso());
-        	 bosque.add(arbol);
-        	  
-		}
-         
-        //imprimir los arboles del bosque huffman para verificar que funcione
-        /*for (int i = 0; i < arboles.size(); i++) {
-			System.out.println(arboles.get(i));
-		}*/
-         
-      
-         
-         //MANDAR EL BOSQUE al objeto de la clase huffman
-         
-         /*Trabajo el reso en la clase huffman:
-          * ordenar los arboles segun su peso EN EL METODO arbolHuffman()
-          * colocarles 0 y 1 al arbol huffman
-          * crear el codigo binario
-          * y lo que haga falta*/
-         
-         
-         huffman=new Huffman(bosque);
-         codex=huffman.arbolHuffman();
-         
-       
-        //OJO NO TOCAR TRY Y CATH 
-		try {
-			
-		 	flujoEscritura = new FileWriter(buscador.getSelectedFile()+".Huffman", true);
-			bREscritura = new BufferedWriter(flujoEscritura);
-			bREscritura.write(txtAPanel.getText());//aqui en lugar de txtAPanel.getText() ira el archivo con la 
-												  //nueva representacion de caracteres es decir lo que se desea guardar 
-												  //el archivo.Huffman
-		
-			bREscritura.flush();
-			flujoEscritura.close();//cerrar el flujo de escritura para eliminar basura de memoria
+             JFileChooser buscador= new JFileChooser(System.getProperty("C:/User/Desktop"));
+             //Establecer un filtor .Huffman
+             FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.Huffman","Huffman");
+             buscador.setFileFilter(filtro);
+             buscador.setApproveButtonText("Seleccionar");
+             buscador.showSaveDialog(null);
 
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		/*codigo para comprimir el archivo de texto a un archivo .Huffman
-		 * 
-		 * 
-		 * */
-		
-		mostrarCodigoHuffman();
+
+
+             //Llamar al metodo para contar el peso de cada caracter
+             text=txtAPanel.getText();
+
+
+             //System.out.println(text.length()*16+" bits");
+
+             //diccionario de frecuencia de apariciones de caracteres
+             dictionarioFrecuency =  Codex.count_chars(text);
+
+             //probar que el diccionario de apariciones de caracteres funcione
+
+             //System.out.println(dictionarioFrecuency.toString());
+
+
+
+             bosque = new ArrayList<>();
+             for (Character key : dictionarioFrecuency.keySet()){
+                ARBOL n = ARBOL.CREA(key);
+                n.setPeso(dictionarioFrecuency.get(key));
+                bosque.add(n);
+             }
+
+             //imprimir los arboles del bosque huffman para verificar que funcione
+            /* for (int i = 0; i < bosque.size(); i++) {
+                        System.out.println(bosque.get(i));
+                     }*/
+
+            //MANDAR EL BOSQUE al objeto de la clase huffman
+
+             Huffman h = new Huffman(bosque);
+             ARBOL r = h.arbolHuffman();
+
+             //System.out.println(r);
+
+             codigoHuffman = new HashMap<>();
+
+             for (Character key : dictionarioFrecuency.keySet()){
+                 String path = h.caminoHuffman(key);
+                 codigoHuffman.put(key, path);
+             }
+
+             //probar que la nueva codificacion huffman funcione correctamente
+             //System.out.println(codigo.toString());
+
+            //mostrar frecuencia de apariciones de caracteres asi como su nueva representacion huffman
+ 
+            String comp ="";
+            for (Character c : codigoHuffman.keySet()) {
+                text=text.replace(c.toString(), codigoHuffman.get(c));
+            }
+
+            //System.out.println("10111001 : \u00b9");
+            //System.out.println(Character.toChars(Integer.parseInt("10111001", 2)));
+
+            int restante = (8 - text.length()%8);
+            //System.out.println(restante);
+            for (int i = 0; i < restante; i++) {
+                text+="0";
+            }
+            
+            String cod ="";
+            for (int i = 0; i < text.length(); i++) {
+                int bite = Integer.parseInt(text.substring(i, i + 8), 2);
+                cod+=String.valueOf(Character.toChars(bite));
+                //System.out.println(cod);
+                i += 7;
+            }
+            
+            String mensajeCodificado=cod;
+            mostrarCodigoHuffman(mensajeCodificado);
+
+
+
+            //LO COMENTADO LO DEJO PARA QUE SIGAN TRABAJANDO A QUIEN LE TOQUE LO SIGUIENTE
+            /*//System.out.println(codigo);
+            String comp ="";
+            //for (Character c : codigo.keySet()) {
+               // text=text.replace(c.toString(), codigo.get(c));
+            //}
+            //System.out.println(text);
+            System.out.println(text.length()+" bits");
+            //System.out.println("10111001 : \u00b9");
+            System.out.println(Character.toChars(Integer.parseInt("10111001", 2)));
+            for (int i = 0; i < text.length(); i++) {
+                int bite = Integer.parseInt(text.substring(i, i+8), 2);
+                System.out.print(Character.toChars(bite));
+                i+=8;
+            }
+
+            //System.out.println(text.length()/8.0+" bytes");
+
+
+           
+         
+
+            //OJO NO TOCAR TRY Y CATH 
+                  /*  try {
+
+                            //flujoEscritura = new FileWriter(buscador.getSelectedFile()+".Huffman", true);
+                            //bREscritura = new BufferedWriter(flujoEscritura);
+                            //bREscritura.write(txtAPanel.getText());//aqui en lugar de txtAPanel.getText() ira el archivo con la 
+                                                                                                      //nueva representacion de caracteres es decir lo que se desea guardar 
+                                                                                                     //el archivo.Huffman
+                            //cambiale nombre a objectoutputstream flujoEscritura tenes el  mismo nombre que arrba 
+                            
+                            ObjectOutputStream flujoEscrituraObject=new ObjectOutputStream(new FileOutputStream(buscador.getSelectedFile()+".Huffman", true));                                                                                
+                            flujoEscrituraObject.writeObject((new NewArchivo(h.arbolHuffman(), mensajeCodificado)).getArchivo());
+                            //bREscritura.flush();
+                            flujoEscrituraObject.close();//cerrar el flujo de escritura para eliminar basura de memoria
+                            
+                            
+                    } catch (IOException e) {
+                            e.printStackTrace();
+                    }*/
+             
+
+             
+             try {
+                 try (ObjectOutputStream flujoEscrituraObject = new ObjectOutputStream(new FileOutputStream(buscador.getSelectedFile()+".Huffman", true))) {
+                     flujoEscrituraObject.writeObject(r);
+                     flujoEscrituraObject.writeObject(cod);
+                     //bREscritura.flush();
+                     flujoEscrituraObject.close();//cerrar el flujo de escritura para eliminar basura de memoria
+                 }
+                    
+                  } catch (IOException e) {
+                      
+                   }
 		
 	}
 	
@@ -154,29 +221,29 @@ public class Controlador implements Initializable{
 	public void importarTexto(){
 		
 		
-		JFileChooser buscador= new JFileChooser(System.getProperty("C:/Documentos"));
-		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.TXT", "txt");
-		buscador.setFileFilter(filtro);
-		buscador.setApproveButtonText("Seleccionar");
-        buscador.showOpenDialog(null);
-        txtAPanel.setText(null);
-        
- 
+            JFileChooser buscador= new JFileChooser(System.getProperty("C:/Documentos"));
+            FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.TXT", "txt");
+            buscador.setFileFilter(filtro);
+            buscador.setApproveButtonText("Seleccionar");
+            buscador.showOpenDialog(null);
+            txtAPanel.setText(null);
 
-        
-        try{
-           flujoLectura= new FileReader(buscador.getSelectedFile());
-           bRLectura= new BufferedReader(flujoLectura);
-           linea= bRLectura.readLine();
-            
-            while(linea!=null){
-                txtAPanel.appendText(linea+"\n");
-                linea= bRLectura.readLine();
+
+
+
+            try{
+               flujoLectura= new FileReader(buscador.getSelectedFile());
+               bRLectura= new BufferedReader(flujoLectura);
+               linea= bRLectura.readLine();
+
+                while(linea!=null){
+                    txtAPanel.appendText(linea+"\n");
+                    linea= bRLectura.readLine();
+                }
+                flujoLectura.close();
+            }catch(Exception ex){
+
             }
-            flujoLectura.close();
-        }catch(Exception ex){
-            
-        }
 	}
 	
 	@FXML
@@ -210,134 +277,56 @@ public class Controlador implements Initializable{
 		FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.Huffman","Huffman");
 		buscador.setFileFilter(filtro);
 		buscador.setApproveButtonText("Seleccionar");
-        buscador.showOpenDialog(null);
-        txtAPanel.setText(null);
+                buscador.showOpenDialog(null);
+                txtAPanel.setText(null);
         
  
 
         
-        try{
-           flujoLectura= new FileReader(buscador.getSelectedFile());
-           bRLectura= new BufferedReader(flujoLectura);
-           linea= bRLectura.readLine();
+                try{
+                   /*flujoLectura= new FileReader(buscador.getSelectedFile());
+                   bRLectura= new BufferedReader(flujoLectura);
+                   linea= bRLectura.readLine();
+
+                    while(linea!=null){
+                        txtAPanel.appendText(linea+"\n");
+                        linea= bRLectura.readLine();
+                    }
+                    flujoLectura.close();*/
+                    FileInputStream arh= new FileInputStream(buscador.getSelectedFile());
+            ObjectInputStream reader = new ObjectInputStream(arh);
             
-            while(linea!=null){
-                txtAPanel.appendText(linea+"\n");
-                linea= bRLectura.readLine();
-            }
-            flujoLectura.close();
-        } catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-	}
-	
-	
-	public void mostrarCodigoHuffman(){
-		/*codificacion necesaria  para mostrar el nuevo codigo huffman en:
-		*txtACodigoHuffman.setText("Meter aqui el codigo huffman");*/
-		txtACodigoHuffman.setText(codex.toString());
-		
-	}
-	
-	public void pesoDeCaracteres(String cadena){
-		caracteres=new ArrayList<>();
-		tablaAscci=new String[255];
-	
-		
-		//Asignar a un arreglo de caracteres la tabla asccii que consta de 255 caracteres
-		char letra=0;
-		for (int i = 0; i < tablaAscci.length; i++) {
-			tablaAscci[i]=String.valueOf(letra++);
-		}
-		
-	
-		//arrayChar = cadena.toCharArray();//separa los caracteres de la cadena que se le manda a la funcion
-		
-		
-		arrayString=cadena.split("");
-		
-	
+            //NewArchivo Archivo = (NewArchivo)reader.readObject();
+            arh.close();
+                } catch(Exception e) {
+                                e.printStackTrace();
+                        }
 
-		/*para acceder a los caracteres se hace lo siguiente:
-		 * imaginar el siguiente arrayList:
-		 * caracter  peso
-		 *   a        2
-		 *   b        3
-		 *   c		  4
-		 *   g		  6
-		 * donde la letra es el caracter y el numero es el peso 
-		 * para acceder a la letra se usara---->> caracteres(i).getCaracter(); dode i se genera del ciclo
-		 * para acceder al numero se usara---->>> caracteres(i).getPeso(); donde i se genera del ciclo
-		 */
-		
-	
 
-		for (int i = 0; i < arrayString.length; i++) {
-			caracterTemporal=obtenerCaracterTablaAscci(arrayString[i]);
-			//saber si el caracter actual ya fue contado
-			if (!isContado(caracterTemporal)) {
-				CaracteresCadena c=new CaracteresCadena();
-				c.setCaracter(caracterTemporal);
-				c.setPeso(contarCaracter(caracterTemporal));
-				c.setCount(true);
-				caracteres.add(c);
-			}
-		
-				
-		}
-		
-		//mostrar los caracteres y sus pesos 
-		/*for (int i = 0; i < caracteres.size(); i++) {
-			System.out.println(caracteres.get(i));
-		}
-		*/
-		
 	}
 	
-	public  int contarCaracter(String caracter){
-		int peso=0;
-		String arrayTemp[]=new String[arrayString.length];
-		int j=0;
-		for (int i = 0; i < arrayString.length; i++) {
-			if (!isContado(arrayString[i])) {
-				arrayTemp[j]=arrayString[i];
-				j++;
-			}
-		}
-		
-		for (int i = 0; i < arrayTemp.length; i++) {
-			if (caracter.equals(arrayTemp[i])) {
-				peso++;
-			}
-		}
-		
-		
-		
-	return peso;
-	}
 	
+	public void mostrarCodigoHuffman(String mensajeCodificado){
+	    /*codificacion necesaria  para mostrar el nuevo codigo huffman en:
+            *txtACodigoHuffman.setText("Meter aqui el codigo huffman");*/
+            String mostrarCodigo="-----------Apariciones de cada caracter-------"+"\n"
+                                  +dictionarioFrecuency.toString()
+                                  +"\n-----------------Codigo Huffman--------------\n"
+                                  +codigoHuffman.toString()
+                                  +"\n---------Codificacion Binaria Huffman---------\n"
+                                  + mensajeCodificado
+                 ;
 
-	public  String obtenerCaracterTablaAscci(String caracter){
-		String caracterTabla="";
-		for (int i = 0; i < tablaAscci.length; i++) {
-			if (tablaAscci[i].equals(caracter)) {
-				caracterTabla=tablaAscci[i];
-			}
-		}
-		return caracterTabla;
+            txtACodigoHuffman.setText(mostrarCodigo);
+			
 	}
+        
+         @FXML
+	 public void limpiar(){
+	 	txtACodigoHuffman.setText(null);
+	 	txtAPanel.setText(null);
+	 }
+
 	
-	public  boolean isContado(String caracter){
-		boolean isContado=false;
-		for (int i = 0; i < caracteres.size(); i++) {
-			if (caracteres.get(i).getCaracter().equals(caracter)) {
-				if (caracteres.get(i).isCount()) {
-					isContado=true;
-				}
-			}
-		}
-		return isContado;
-	}
+	
 }
