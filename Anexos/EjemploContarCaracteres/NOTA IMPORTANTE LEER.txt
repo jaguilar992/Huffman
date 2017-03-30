@@ -1,0 +1,4 @@
+ESTE SOLO ES EL EJEMPLO PARA QUE USTEDES LO VEAN CON ES QUE SE APLICARA LO DE CONTAR CARACTERES 
+ES ESTE CASO LO HICE CON LA FRASE:
+
+Me gusta estar en la clase de algoritmos y estructura de datos.

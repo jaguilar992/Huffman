@@ -150,7 +150,7 @@ public class Controlador implements Initializable{
              //System.out.println(codigo.toString());
 
             //mostrar frecuencia de apariciones de caracteres asi como su nueva representacion huffman
-            System.out.println(text.length()*16+" bits");
+            //System.out.println(text.length()*16+" bits");
             for (Character c : codigoHuffman.keySet()) {
                 text=text.replace(c.toString(), codigoHuffman.get(c));
             }
